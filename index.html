@@ -37,7 +37,12 @@
   </body>
 
   <script type="text/javascript">
-    // Solución al Problema 1 - Se ejecuta cuando agregas el archivo
+    /*
+    ----------------------------------------------------------------
+     Solución al Problema 1 - Se ejecuta cuando agregas el archivo
+    ----------------------------------------------------------------
+    */
+
     document.getElementById("input1").addEventListener("change", function () {
       var fr = new FileReader();
       fr.onload = function () {
@@ -64,7 +69,7 @@
             - La cuarta línea contiene el mensaje
             - Los caracteres posibles en el mensaje son [a-zA-Z0-9]
 
-        Si el archivo no cumple con estas caracteristicas el programa se  detiene
+        Si el archivo no cumple con estas caracteristicas el programa se detiene
         */
         if (
           !(values[2] >= 3 && values[2] <= 5000) ||
@@ -74,14 +79,6 @@
           lines[2].length !== values[1] ||
           lines[3].length !== values[2]
         ) {
-          console.log(
-            lines[1],
-            lines[1].length,
-            lines[2],
-            lines[2].length,
-            lines[3],
-            lines[3].length
-          );
           let result = "";
           !(values[2] >= 3 && values[2] <= 5000)
             ? (result +=
@@ -115,6 +112,34 @@
           return;
         }
 
+        /* Validar si las instrucciones tienes caracteres dobles */
+        let errors = "";
+        for (let i = 1; i <= 2; i++) {
+          let lastChar = null;
+          lines[i].split("").forEach((char, index) => {
+            if (!lastChar || lastChar !== char) {
+              lastChar = char;
+            } else {
+              if (lastChar === char) {
+                errors +=
+                  "Mensaje " +
+                  i +
+                  " con caracter ' " +
+                  lastChar +
+                  " ' duplicado en la posición " +
+                  index +
+                  "\n";
+              }
+            }
+          });
+        }
+
+        if (errors !== "") {
+          alert(errors);
+          location.reload();
+          return;
+        }
+
         // Limpiar los caracteres duplicados en la cadena
         let stringClean = lines[3].split("").reduce((acc, cur, index) => {
           if (acc.length >= 1 && acc[acc.length - 1] !== cur) return acc + cur;
@@ -124,6 +149,16 @@
         // Eliminamos los caracteres especiales
         lines[1] = lines[1].replace(/[^a-zA-Z0-9 ]/g, "");
         lines[2] = lines[2].replace(/[^a-zA-Z0-9 ]/g, "");
+
+        // Validamos si hay más de 1 mensaje en la cadena
+        if (
+          stringClean.indexOf(lines[1]) !== -1 &&
+          stringClean.indexOf(lines[2]) !== -1
+        ) {
+          alert("Hay mas de 1 mensaje en la cadena de caracteres");
+          location.reload();
+          return;
+        }
 
         // Guardamos los resultados en una cadena
         let result =
@@ -148,7 +183,11 @@
       fr.readAsText(this.files[0]);
     });
 
-    // Solución al Problema 2 - Se ejecuta cuando agregas el archivo
+    /*
+    ----------------------------------------------------------------
+     Solución al Problema 2 - Se ejecuta cuando agregas el archivo
+    ----------------------------------------------------------------
+    */
     document.getElementById("input2").addEventListener("change", function () {
       var fr = new FileReader();
       fr.onload = function () {
@@ -209,22 +248,25 @@
           return;
         }
 
-        console.log(lines);
-
         let winner = "";
-        let bestScore = 0;
+        let accScoreP1 = 0,
+          accScoreP2 = 0,
+          bestScore = 0;
 
         lines.forEach((line, index) => {
           if (index !== 0) {
             let values = line;
+            accScoreP1 += values[0]
+            accScoreP2 += values[1]
+
             let score =
-              values[0] - values[1] < 0
-                ? (values[0] - values[1]) * -1
-                : values[0] - values[1];
+            accScoreP1 - accScoreP2 < 0
+                ? (accScoreP1 - accScoreP2) * -1
+                : accScoreP1 - accScoreP2;
 
             if (score > bestScore) {
               bestScore = score;
-              winner = values[0] - values[1] < 0 ? "2" : "1";
+              winner = accScoreP1 - accScoreP2 < 0 ? "2" : "1";
             }
           }
         });
